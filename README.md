@@ -24,6 +24,7 @@ PYTHONPATH=src python3 scripts/01_reproduce_ReE.py     # Re_E and its validation
 PYTHONPATH=src python3 scripts/02_critical_mode.py     # critical mode structure
 PYTHONPATH=src python3 scripts/03_shear_shift.py       # the shear-shifted problem
 PYTHONPATH=src python3 scripts/04_feasibility.py       # the master inequality
+PYTHONPATH=src python3 scripts/05_quadratic_form.py    # how large c2/K can be made
 PYTHONPATH=src python3 -m pytest tests/ -q
 ```
 
@@ -86,13 +87,29 @@ quartic term share the factor `𝒟_W`, one has the exact identity
 requirement on `Q` drops from `ĉ₂/K̂ ≳ 20` to `ĉ₂/K̂ ≳ 5`. The criterion is
 box-independent: both sides scale like `√(L_xL_z)`.
 
+**8. Where the construction currently stands.** The linearised
+Orr–Sommerfeld/Squire operator (validated to `2×10⁻¹⁵` against the energy
+identity, and to `2×10⁻¹²` against exact eigenvalues at `α = 0`) turns condition
+(C2) into a matrix inequality. Solving it shows that the natural Lyapunov-equation
+`Q` is bounded on `L²` but **not smoothing** — its pointwise constants diverge
+with resolution — so a finite-rank truncation is mandatory. **Rank two is
+optimal**, recovering 99.4% of the full-rank certified rate: the dangerous
+subspace really is the two-dimensional roll → streak pair. It gives
+
+```
+best achievable  ĉ₂/K̂' ≈ 0.183       required (Re = 20.7)  ≈ 4.9
+```
+
 ## What is *not* established
 
-**No improved bound on `Re` is proved.** The above is the framework plus the
-quartic ingredient; `Q` has not been constructed, the constants in the cubic
-bound are lossy Cauchy–Schwarz/Poincaré estimates that should be sharpened
-before drawing conclusions, and nothing has been certified in interval
-arithmetic. Prior art (Kaiser–Tilgner–von Wahl; Mulone and co-workers;
+**No improved bound on `Re` is proved.** The sufficient conditions fall short by
+a factor of about 27, and that comparison already flatters the construction (the
+achievable figure is for one Fourier block; the certificate needs one `c₂` across
+all of them). This is a failure of the present chain of inequalities, not a
+disproof of the ansatz — §3.10 identifies the three lossy steps, the crudest by
+far being the `L^∞` cubic estimate, which discards the requirement that the
+nonlinear term actually correlate with `𝒬̃u`. Nothing has been certified in
+interval arithmetic. Prior art (Kaiser–Tilgner–von Wahl; Mulone and co-workers;
 Fuentes–Goluskin–Chernyshenko) has **not** been checked — the literature search
-for this session did not complete — so no novelty is claimed. See §3.9 of
+for this session did not complete — so no novelty is claimed. See §3.11 of
 `docs/03_quartic_lyapunov.md` for the full accounting.

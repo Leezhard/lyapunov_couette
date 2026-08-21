@@ -544,7 +544,113 @@ small boxes would be of little interest. Sharpening the mean-streak estimate
 `v = w = 0` and `Ė = −Re⁻¹D` is strongly negative) would lower both sides
 further, but is not needed to make the criterion well-posed.
 
-## 3.10 Honest accounting: what is proved, and what is not
+## 3.10 How large can `ĉ₂/K̂` actually be made? A first computation
+
+`src/couette/linearised.py` assembles the linearised operator `F₁` in the same
+Galerkin bases, as the Orr–Sommerfeld/Squire system
+
+```
+d/dt (Δ_k v) = [ −iα y Δ_k + Re⁻¹ Δ_k² ] v,     d/dt η = −iβ v + [ −iα y + Re⁻¹ Δ_k ] η.
+```
+
+It is validated not against remembered numbers but against the matrices already
+built for §1: writing `M`, `A`, `B` for the energy, production and dissipation
+matrices, the energy identity (1.1) is equivalent to
+
+```
+M L + Lᴴ M = 2 ( A − B/Re ),                                            (3.22)
+```
+
+which holds to `≈ 2×10⁻¹⁵` at every `(α, β, Re)` tested. At `α = 0` the spectrum
+reproduces the exact eigenvalues — Squire modes `−(β² + (mπ/2)²)/Re` and the
+clamped Stokes modes — to `2×10⁻¹²`, is real, and has abscissa `−π²/(4Re)`.
+
+In these coordinates the condition (C2), `Γ₂ ≤ −c₂D[u]`, is the matrix inequality
+
+```
+Qᴴ M L + Lᴴ M Q  ⪯  − c₂ B,                                             (3.23)
+```
+
+per Fourier block — a linear matrix inequality in `(Q, c₂)`. Substituting
+`Q = τI` and using (3.22) turns the `τ`-part into `2τ(A − B/Re)`: the energy
+functional alone, which by construction fails on exactly the band of wavenumbers
+where `Re_E(α,β) < Re`.
+
+**The best rate per unit operator norm.** Whitening by `M` and solving the
+Lyapunov equation `Q_w L_w + L_wᴴ Q_w = −B_w` gives the largest `c₂` a quadratic
+form of unit operator norm can certify. At `Re = 20.7`:
+
+| `(α, β)` | `Re_E(α,β)` | `c₂/‖Q‖` |
+|---|---|---|
+| (0, 1.5582) | 20.663 | 0.03401 |
+| (0, 1.0) | 23.331 | 0.04189 |
+| (0, 4.0) | 42.085 | 0.05449 |
+| (0.3, 1.5582) | 20.972 | 0.03439 |
+| (1.5, 1.6) | 28.249 | 0.04462 |
+
+The critical block is, as expected, the worst.
+
+**But the Lyapunov solution is inadmissible.** `Q` from (3.23) is bounded on `L²`
+and *not smoothing*, so its pointwise constants diverge with resolution:
+
+| `n_max` | 12 | 16 | 20 | 24 | 28 | 32 | 36 |
+|---|---|---|---|---|---|---|---|
+| `c₂/‖Q‖` | 0.034012 | 0.034012 | 0.034012 | 0.034012 | 0.034012 | 0.034012 | 0.034012 |
+| `K̂` | 52.8 | 98.6 | 131.8 | 196.6 | 267.5 | 438.1 | 494.3 |
+
+The rate is converged; `K̂` is not, and will not be. **A finite-rank truncation
+of `𝒬̃` is therefore mandatory, not merely convenient** — which is exactly what
+§3.8 anticipated, now for a concrete reason.
+
+**The rank trade-off.** Truncating `𝒬̃ = Σ_j μ_j e_j ⊗ e_j` to rank `r` makes the
+constants finite and resolution-independent, with the exact Cauchy–Schwarz bounds
+`K̂ = (Σ_j μ_j²‖∇e_j‖²_∞)^{1/2}` and `K̂' = (Σ_j μ_j²‖e_j‖²_∞)^{1/2}`:
+
+| rank | `c₂` | `K̂` | `K̂'` | `c₂/K̂` | `c₂/K̂'` |
+|---|---|---|---|---|---|
+| 1 | 0.01701 | 0.385 | 0.1425 | 0.0442 | 0.1194 |
+| **2** | **0.03380** | 0.645 | **0.1851** | 0.0524 | **0.1826** |
+| 3 | 0.03379 | 0.863 | 0.2067 | 0.0391 | 0.1635 |
+| 4 | 0.03353 | 1.132 | 0.2204 | 0.0296 | 0.1522 |
+| 8 | 0.03289 | 2.691 | 0.2613 | 0.0122 | 0.1259 |
+| 16 | 0.03220 | 7.391 | 0.3284 | 0.0044 | 0.0980 |
+
+**Rank two is optimal**, recovering 99.4% of the full-rank certified rate. That
+is a satisfying confirmation of §2.2: the dangerous subspace really is the
+two-dimensional roll → streak pair, and the large Reynolds–Orr spectral gap
+`λ₁/λ₀ = 0.26` means nothing else needs resolving. Rank beyond two buys no rate
+and costs `K̂` linearly.
+
+### The verdict, at present
+
+```
+best achievable  ĉ₂/K̂' ≈ 0.183        required (§3.9, Re = 20.7)  ≈ 4.9
+```
+
+**The construction falls short by a factor of about 27** — roughly 1.4 orders of
+magnitude. And this is the optimistic side of the comparison: the achievable
+figure is for the *single* critical Fourier block, whereas the certificate needs
+one `c₂` valid across all blocks simultaneously, which can only lower it.
+
+This is a failure of the *sufficient conditions*, not a disproof of the ansatz.
+The lossy steps, in the order they are worth attacking:
+
+1. **The cubic estimate** `|⟨𝒬̃u,(u·∇)u⟩| ≤ ‖𝒬̃u‖_∞‖u‖‖∇u‖` is by far the
+   crudest link. It discards the requirement that the nonlinear term actually
+   *correlate* with `𝒬̃u`; a mode-resolved treatment (the triad interactions
+   between the resolved rank-two subspace and the tail) should recover a large
+   factor, and is the natural place for the rigorous tail bound the programme
+   calls for.
+2. **The Poincaré step** uses `λ₁ = π²/4`, the infimum over all wavenumbers,
+   whereas the critical block has `θ = D/‖u‖² = 4.895` — nearly a factor of two
+   given away, and more for the tail.
+3. **The direction-by-direction Young inequality** (3.15) with globally worst
+   constants ignores that `a₂`, `a₃`, `a₄` are correlated across directions.
+   Imposing (3.15) as an SOS/SDP condition on the *joint* quadratic forms,
+   rather than through three separately worst-cased scalars, is the principled
+   fix and is what an SOS formulation would do automatically.
+
+## 3.11 Honest accounting: what is proved, and what is not
 
 **Established here, rigorously:**
 
@@ -570,16 +676,14 @@ further, but is not needed to make the criterion well-posed.
 * **No improved bound on `Re` is proved yet.** Everything above is the
   *framework* plus the quartic ingredient. Points 1–6 do not by themselves
   certify global stability at any `Re > Re_E`.
-* **`𝒬` has not been constructed.** Producing a finite-rank `𝒬̂` with certified
-  `ĉ₂` and `K̂` satisfying (3.18ʹ) is the immediate next task, and it is where
-  the construction may still fail. Doing it needs the linearised Orr–Sommerfeld
-  /Squire operator, which is not implemented here. A crude scaling estimate for
-  a rank-two `𝒬̃` built from the critical mode suggests the achievable ratio is
-  of order unity against a requirement of order 5 — i.e. short, but by a factor
-  of a few rather than by orders of magnitude, and computed with bounds
-  (particularly the `L^∞` cubic estimate) that are the crudest in the chain.
-  That estimate is quoted only to indicate scale; it has not been computed
-  carefully and should not be relied on either way.
+* **The sufficient conditions do not close.** §3.10 computes the best `ĉ₂/K̂'`
+  attainable at the critical block (0.183, at rank two) against the requirement
+  of §3.9 (≈ 4.9): short by a factor of about 27, and that comparison flatters
+  the construction, since the achievable figure is for one Fourier block while
+  the certificate needs one `c₂` across all of them. This is a failure of the
+  present chain of inequalities, not a disproof of the ansatz — the three lossy
+  steps are identified at the end of §3.10 — but as things stand **no `Re > Re_E`
+  is certified**.
 * The constants are still not sharp. §3.9 already removes the worst loss (a
   factor 4.71), but the surviving first-order term keeps a `√(L_xL_z)` box
   dependence that a separate treatment of the mean-streak component should
