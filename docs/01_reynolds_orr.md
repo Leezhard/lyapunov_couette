@@ -196,8 +196,9 @@ is obtained from a Hermitian-definite generalised eigensolve. Two details:
 
 ## 1.6 The reduced α = 0 problem, and its Rayleigh–Bénard twin
 
-At `α = 0` continuity gives `ŵ = i D v̂ / β`, so all the cross-stream motion is
-carried by `v̂` alone and the `(v, w)` dissipation collapses to
+At `α = 0` **and `β ≠ 0`** continuity gives `ŵ = i D v̂ / β`, so all the
+cross-stream motion is carried by `v̂` alone and the `(v, w)` dissipation
+collapses to
 
 ```
 ∫ ( |Dv|² + β²|v|² + |Dw|² + β²|w|² ) dy = β⁻² ∫ | (D² − β²) v |² dy,
@@ -210,6 +211,12 @@ using `v = Dv = 0` at the walls. Choosing phases so that `û` and `v̂` are real
  ─────── = max ──────────────────────────────────────────────────────── .  (1.9)
  Re_E(β)  u,v   ∫ (u'² + β²u²) dy + β⁻² ∫ (v'' − β²v)² dy
 ```
+
+over real `(u, v)` with `u(±1) = 0` and `v(±1) = v'(±1) = 0` — a class that is
+not an extra assumption but is forced by `u = 0` at the walls together with
+continuity (`v' = iβw` and `w(±1) = 0`). The `β⁻²` makes the degeneracy explicit:
+`β = 0` is excluded, and indeed `Re_E(β) ~ 17.79/β → ∞` as `β → 0`, so nothing is
+lost.
 
 With `R := Re_E/2` the Euler–Lagrange equations of (1.9) are
 
