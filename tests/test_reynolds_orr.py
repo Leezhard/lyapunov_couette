@@ -84,3 +84,15 @@ def test_production_scales_linearly_with_uniform_shear():
     for s in (0.5, 0.8, 1.3, 2.0):
         lam = ro.growth(0.0, BETA_C, n_max=32, sigma=s)
         assert abs(1.0 / lam - RE_E / s) < 1e-8
+
+
+def test_orr_two_dimensional_value():
+    """beta = 0 must reproduce Orr's (1907) two-dimensional value ~44.3."""
+    import scipy.optimize as so
+    r = so.minimize_scalar(lambda a: -ro.growth(a, 0.0, n_max=40),
+                           bounds=(0.3, 3.0), method="bounded",
+                           options={"xatol": 1e-12})
+    re_2d = -1.0 / r.fun
+    assert abs(re_2d - 44.3035467005) < 1e-6
+    assert abs(r.x - 1.8933674203) < 1e-6
+    assert re_2d > 2 * RE_E          # the worst case is genuinely 3D

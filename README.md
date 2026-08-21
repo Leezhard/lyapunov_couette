@@ -39,7 +39,9 @@ and the implied Rayleigh–Bénard values, which come out as `Ra_c = 1707.7618`,
 Re_E = 20.6625372177809      at   (α_c, β_c) = (0, 1.5581617774)
 ```
 
-The literature's "20.65"/"20.7" is this number rounded. The critical mode is a
+The literature's "20.65"/"20.7" is this number rounded. A fourth cross-check:
+restricting to two-dimensional disturbances (`β = 0`) gives
+`Re_E(2D) = 44.3035467` at `α_c = 1.8934`, reproducing Orr's 1907 value. The critical mode is a
 streamwise-independent roll–streak: `u` even, `v` even, `w` odd, with 66% of the
 energy in the streak, and a large Reynolds–Orr spectral gap `λ₁/λ₀ = 0.26`.
 

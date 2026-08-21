@@ -289,3 +289,16 @@ are entire and the bases are polynomial.
 So the energy method first fails on a **streamwise-independent** disturbance.
 Section 2 shows why that is the most favourable possible news for the programme
 of beating `Re_E`.
+
+**A fourth cross-check: Orr's two-dimensional value.** Restricting to `β = 0`
+(purely two-dimensional disturbances) the same solver gives
+
+```
+Re_E(2D) = 44.3035467005     at   α_c = 1.8933674203,
+```
+
+reproducing the value ≈ 44.3 that Orr obtained in 1907 — an independent
+literature number that shares no machinery with the Rayleigh–Bénard check of
+§1.6, since it lives on the opposite edge of the wavenumber plane. It is also
+more than twice the 3D threshold, which is the classical statement that the
+energy method's worst case is genuinely three-dimensional.
