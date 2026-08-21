@@ -24,14 +24,23 @@ energy-neutral), `E²` is such a term:
 ⟨∇(E²), F₂(u)⟩ = 2E ⟨u, F₂(u)⟩ = 0.                                      (3.1)
 ```
 
-Remarkably, so is the *cubic* term `2E⟨W,u⟩`:
+The cubic term `2E⟨W,u⟩` cannot produce a quintic by mere degree counting
+(`∇V₃` is quadratic, `F₂` is quadratic, so at most quartic). What energy
+neutrality buys there is different, and it is what makes the ansatz clean:
 
 ```
-⟨∇(2E⟨W,u⟩), F₂⟩ = 2⟨W,u⟩⟨u,F₂⟩ + 2E⟨W,F₂⟩ = 0 + 2E⟨W,F₂(u)⟩,           (3.2)
+⟨∇(2E⟨W,u⟩), F₂⟩ = 2⟨W,u⟩⟨u,F₂(u)⟩ + 2E⟨W,F₂(u)⟩ = 0 + 2E⟨W,F₂(u)⟩,     (3.2)
 ```
 
-which is only *quartic*. This is the whole reason the ansatz below is the
-minimal viable one.
+i.e. the degree-4 **cross term** `2⟨W,u⟩⟨u,F₂(u)⟩` vanishes, leaving `Γ₄` as a
+single clean object. Without that cancellation `Γ₄` would be
+`2E·Ė + 2⟨W,u⟩⟨u,F₂(u)⟩ + 2E⟨W,F₂(u)⟩` and the shear-shift theorem below would
+not hold.
+
+Both cancellations use `⟨u, F₂(u)⟩ = 0` in the *unweighted* `L²` inner product.
+This is special to `E²`, not to quartic functionals in general: replacing `E` by
+a weighted energy `⟨Mu,u⟩` with `M ≠ cI` — the reweighting of §2.4 — brings the
+quintic term straight back.
 
 **The ansatz.**
 
@@ -46,8 +55,12 @@ bounded symmetric positive operator. Completing the square,
 V = ( E + ⟨W,u⟩ )² + ( Q[u] − ⟨W,u⟩² ),                                  (3.4)
 ```
 
-so **`V > 0` for all `u ≠ 0` provided `Q[u] > ⟨W,u⟩²`**, which holds whenever
-`𝒬 ⪰ q₋ I` with `q₋ > ‖W‖²`.
+so **`V > 0` for all `u ≠ 0` if and only if `Q[u] > ⟨W,u⟩²` for all `u ≠ 0`**,
+i.e. iff `𝒬 ≻ W ⊗ W`. Sufficiency is immediate from (3.4). Necessity: along a
+ray `u = s û` with `⟨W,û⟩ < 0`, the choice `s = −⟨W,û⟩/E[û] > 0` annihilates the
+square exactly, leaving `V = s²(Q[û] − ⟨W,û⟩²)`; and replacing `û` by `−û`
+covers the rays with `⟨W,û⟩ > 0`. A convenient sufficient surrogate is
+`𝒬 ⪰ q₋ I` with `q₋ > ‖W‖²` (Cauchy–Schwarz).
 
 ## 3.2 The exact derivative
 
@@ -85,12 +98,29 @@ This is the structural payoff of the ansatz.
 > Γ₄ ≤ 0  for all u   ⟺   Re ≤ Re_E[ S^U − S^W ].                        (3.8)
 > ```
 
-*Proof of (3.6).* `P` is an orthogonal projection and `W = PW`, so
-`⟨W, F₂(u)⟩ = −⟨W, (u·∇)u⟩ = −∫ W_i u_j ∂_j u_i dV`. Integrating by parts,
-using `∇·u = 0` and `u = 0` on the walls to kill the boundary term,
-`= ∫ u_i u_j ∂_j W_i dV`, and since `u_i u_j` is symmetric in `(i,j)` only the
-symmetric part of `∂_j W_i` survives, giving `∫ u_i u_j S^W_ij dV`. Combining
-with (1.3) gives (3.7). ∎
+*Proof of (3.6).* `P` is an orthogonal projection and `W = PW` — this is where
+both `∇·W = 0` and `W·n = 0` are load-bearing, since together they kill
+`∫W·∇q = −∫q ∇·W + ∮ q W·n` for the nonlinear pressure `q`. Hence
+`⟨W, F₂(u)⟩ = −⟨W, (u·∇)u⟩ = −∫ W_i u_j ∂_j u_i dV`. Integrating by parts and
+using `∇·u = 0`, the boundary term is `−∮ (W·u)(u·n) dS`, which vanishes under
+`u·n = 0` alone (full no-slip is not needed here; it is needed only for the
+viscous term in §3.4). So `⟨W,F₂(u)⟩ = ∫ u_i u_j ∂_j W_i dV`, and since
+`u_i u_j` is symmetric in `(i,j)` only the symmetric part of `∂_j W_i` survives.
+Combining with (1.3) gives (3.7). ∎
+
+Note `W` is **not** required to vanish at the walls for (3.6); that constraint
+arrives separately in §3.4. This is verified numerically in
+`tests/test_shear_shift_theorem.py`, which checks (3.6) against a directly
+evaluated advective nonlinearity using shift profiles that are deliberately
+non-zero at `y = ±1`.
+
+> **Warning: the quartic order alone certifies nothing.** Under the hypotheses
+> of the theorem, `W = U = (y,0,0)` is admissible — it is divergence-free with
+> `W·n = 0`. Then `S^W = S^U` and `Γ₄ = −2E Re⁻¹∫|∇u|² < 0` at *every* `Re`,
+> which would "prove" global stability of plane Couette flow outright. The
+> freedom in `W` must therefore be paid for elsewhere in `dV/dt`, and §3.4
+> identifies exactly where: the viscous part of `Γ₃` forces `g(±1) = 0`, which
+> excludes `W = U` and confines the shift to mean-preserving redistributions.
 
 So the quartic term of `dV/dt` is governed by *exactly the eigenvalue problem
 already solved in §1*, with a modified weight — which is why the solver in
@@ -226,18 +256,32 @@ Write `u = s û` with `‖û‖ = 1` and `s > 0` the amplitude, and let
 `D̂ = ∫|∇û|² dV`. Then
 
 ```
-dV/dt = a₂(û) s² + a₃(û) s³ + a₄(û) s⁴,
+dV/dt = a₂(û) s² + a₃(û) s³ + a₄(û) s⁴ = s² q(s),   q(s) = a₂ + a₃s + a₄s².
 ```
 
-and `dV/dt < 0` for all `s > 0` is **equivalent** to `a₂ + a₃ s + a₄ s² < 0` for
-all `s > 0`, i.e. to
+The condition we actually want is not bare negativity but a **uniform margin per
+direction**, `sup_{s>0} (dV/dt)/s² < 0`, equivalently `q < 0` on the *closed*
+half-line `[0,∞)`, equivalently: there is `c(û) > 0` with `dV/dt ≤ −c(û)‖u‖²`
+for all `s`. That is exactly
 
 ```
 a₂ < 0,   a₄ ≤ 0,   and   ( a₃ ≤ 0   or   a₃² < 4 a₂ a₄ ).               (3.15)
 ```
 
 (If `a₄ = 0` the last clause reduces to `a₃ ≤ 0`; `a₄ > 0` is impossible;
-equality `a₃² = 4a₂a₄` gives a tangency `dV/dt = 0` and is excluded.)
+equality `a₃² = 4a₂a₄` gives a tangency `q = 0` at a finite amplitude and is
+excluded.) Bare negativity on the *open* half-line is strictly weaker — it only
+requires `a₂ ≤ 0`, `a₄ ≤ 0`, `(a₃ ≤ 0 or a₃² < 4a₂a₄)` with
+`(a₂,a₃,a₄) ≠ (0,0,0)` — and it is not what a Lyapunov argument can use. Note
+also that `a₃` is odd under `û → −û`, so requiring (3.15) for *every* direction
+collapses the `a₃ ≤ 0` branch to `a₃ = 0`.
+
+**Why a margin, and not just `dV/dt < 0`.** The unit sphere of an
+infinite-dimensional phase space is not compact, and `a₂(û)` is unbounded below
+(it contains `−Re⁻¹‖∇û‖²`), so pointwise strict negativity on the sphere does
+*not* by itself give a rate uniform in `û`. This is precisely why the sufficient
+conditions of §3.8 are stated with constants measured against the **dissipation**
+`D[u]` rather than against `‖u‖²`: that is what makes the margin uniform.
 
 This is exact — no inequalities have been spent yet. It is also the natural
 target for an SOS/SDP formulation, since it is a condition on the coefficients
