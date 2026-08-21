@@ -71,8 +71,14 @@ Certifying `Re = 20.7` needs only `‖g‖_{L²} ≥ 9.59 × 10⁻⁴`.
 **6. An exact negativity criterion and a master inequality.** Writing
 `u = s û`, `dV/dt = a₂s² + a₃s³ + a₄s⁴`, so `dV/dt < 0` for all `s > 0` iff
 `a₂ < 0`, `a₄ ≤ 0` and (`a₃ ≤ 0` or `a₃² < 4a₂a₄`). With explicit constants this
-collapses to `b² < 4c₂c₄`, and feasibility reduces to a single ratio
-`ĉ₂/K̂ ≳ 10²` that the still-to-be-built quadratic form `Q` must achieve.
+collapses to `b² < 4c₂c₄`, and feasibility reduces to a single ratio that the
+still-to-be-built quadratic form `Q` must achieve.
+
+**7. A regrouping that improves the constants ~4.7×.** Because `Ė` and the
+quartic term share the factor `𝒟_W`, one has the exact identity
+`2Ė⟨W,u⟩ + Γ₄ = −2𝒟_W(E + ⟨W,u⟩) − 2⟨W,u⟩⟨W,F₂(u)⟩`, which turns the dominant
+`O(‖W‖)` cubic term into `O(‖W‖²)`. For the first target `Re = 20.7` the
+requirement on `Q` drops from `ĉ₂/K̂ ≳ 10²` to `ĉ₂/K̂ ≳ 20`.
 
 ## What is *not* established
 

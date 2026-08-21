@@ -320,10 +320,10 @@ b = 2( 1/Re_E + 1/Re ) ‖W‖ + ( ‖W''‖/Re + 2K ) / λ₁ .                
 `B̂ = 2K̂/λ₁`. Maximising `4c₂c₄ − b²` over `ρ` gives a positive value **iff**
 
 ```
-                 4 c₄ ĉ₂  >  16 B̂ b₀ ,    i.e.    ĉ₂ / K̂  >  8 b₀ / (λ₁ c₄).   (3.18)
+                 4 c₄ ĉ₂  >  16 B̂ b₀ ,    i.e.    ĉ₂ / K̂  >  8 b₀ / (λ₁ c₄).  (3.18ʹ)
 ```
 
-`scripts/04_feasibility.py` evaluates (3.18) over a sweep of targets and shift
+`scripts/04_feasibility.py` evaluates (3.18ʹ) over a sweep of targets and shift
 amplitudes, with the box `L_x = L_z = 2π/β_c`. Writing `‖g‖ = safety × (3.14)`:
 
 | `Re` | safety | `‖g‖_{L²}` | `Re_E[Σ]` | `c₄` | `b₀` | required `ĉ₂/K̂` |
@@ -346,7 +346,96 @@ finite-rank `𝒬̂` whose certified linear decay rate `ĉ₂` exceeds its certi
 nonlinear constant `K̂` by a factor of order 10², using the constants as they
 stand — or, better, first sharpen them (see §3.9) and lower the target.
 
-## 3.9 Honest accounting: what is proved, and what is not
+## 3.9 Sharpening: the regrouped form of `dV/dt`
+
+The estimate (3.17) is wasteful in one specific place. The term `2Ė⟨W,u⟩` was
+bounded by Cauchy–Schwarz, which throws away the fact that `Ė` and the quartic
+term `Γ₄` share the *same* factor `𝒟_W`. Keeping it gives an exact identity.
+
+Write `𝒟_W := −( Ė + ⟨W, F₂(u)⟩ ) = ∫ Σ u v dV + Re⁻¹ D`, so that
+`Γ₄ = −2E 𝒟_W` and the quartic condition (C4) reads `𝒟_W ≥ c₄ D`. Substituting
+`Ė = −𝒟_W − ⟨W, F₂(u)⟩` into `2Ė⟨W,u⟩` and adding `Γ₄`:
+
+> **Regrouping identity.**
+> ```
+> 2Ė⟨W,u⟩ + Γ₄ = − 2 𝒟_W Ψ − 2⟨W,u⟩⟨W, F₂(u)⟩,      Ψ := E + ⟨W,u⟩.       (3.18)
+> ```
+> Hence, exactly,
+> ```
+> dV/dt = − 2 𝒟_W Ψ − 2⟨W,u⟩⟨W,F₂(u)⟩ + 2E⟨W,F₁u⟩ + Γ₂ + 2⟨𝒬u,F₂(u)⟩.     (3.19)
+> ```
+
+Every `W`-dependent term in (3.19) is now either **the leading negative term**
+`−2𝒟_W Ψ`, or **quadratic in `W`**. Since `Ψ = E + ⟨W,u⟩ ≥ ½‖u‖² − ‖W‖‖u‖ > 0`
+as soon as `‖u‖ > 2‖W‖`, the leading term is negative except in a ball of radius
+`2‖W‖`, where it is bounded by `4C_D‖W‖²D` with
+`C_D = ‖Σ‖_∞/(2λ₁) + 1/Re`. Explicitly,
+
+```
+−2𝒟_W Ψ ≤ − c₄ D ‖u‖² + 2c₄‖W‖‖u‖D + 4(C_D + c₄)‖W‖² D.
+```
+
+Two further estimates improve on §3.8:
+
+* `|2⟨W,u⟩⟨W,F₂(u)⟩| ≤ (‖W‖ ‖g'‖_∞ / λ₁) ‖u‖ D` — **quadratic in the shift
+  amplitude**, where the Cauchy–Schwarz route gave a term linear in it.
+* For `2E⟨W,F₁u⟩`, integrate by parts *once* rather than twice: using
+  `ū(±1) = 0`, `∫g''ū dy = −∫g'ū' dy`, and `‖ū'‖²_{L²(−1,1)} ≤ ‖∇u‖²/(L_xL_z)`,
+  ```
+  |2E⟨W,F₁u⟩| ≤ (‖W'‖ / Re) ‖u‖² D^{1/2} ≤ ( ‖W'‖ / (Re √λ₁) ) ‖u‖ D,
+  ```
+  which replaces `‖W''‖/(Re λ₁)` by the smaller `‖W'‖/(Re √λ₁)`.
+
+Collecting, with `‖u‖ = s` and `D = s²D̂`, `dV/dt ≤ D̂[ −c₄s⁴ + b s³ − c₂^eff s² ]`
+where
+
+```
+b       = ‖W'‖/(Re√λ₁) + 2K/λ₁ + 2c₄‖W‖ + ‖W‖‖g'‖_∞/λ₁                   (3.20)
+c₂^eff  = c₂ − 4(C_D + c₄)‖W‖²                                           (3.21)
+```
+
+and the master inequality becomes `b² < 4 c₂^eff c₄`. Only the first two terms of
+(3.20) are first order in the shift amplitude; the last two are second order, and
+the correction in (3.21) is second order too.
+
+**The gain.** For the optimal shift `g ∝ −Φ'` the relevant norm ratios are
+
+```
+‖g'‖/‖g‖ = 3.4226,     ‖g''‖/‖g‖ = 15.4509,     ‖g'‖_∞/‖g‖ = 4.1685.
+```
+
+At `Re = 20.7` the first-order `‖W‖`-coefficient of `b₀` drops from `0.4959`
+(§3.8) to `0.1053` — a factor **4.71**. Including the second-order terms of
+(3.20), `scripts/04_feasibility.py` gives:
+
+| `Re` | safety | required `ĉ₂/K̂`, §3.8 | required `ĉ₂/K̂`, §3.9 | gain |
+|---|---|---|---|---|
+| 20.70 | 1.5 | 212.9 | 46.3 | 4.60× |
+| 20.70 | 2.0 | 142.0 | 31.1 | 4.56× |
+| 20.70 | 4.0 | 94.6 | 21.4 | 4.42× |
+| 20.70 | 10.0 | 78.9 | **19.6** | 4.03× |
+| 21.00 | 2.0 | 140.3 | 38.4 | 3.66× |
+| 22.00 | 2.0 | 135.2 | 61.2 | 2.21× |
+| 22.00 | 10.0 | 75.1 | 110.7 | 0.68× |
+
+So for the first target `Re = 20.7` the requirement on `𝒬` is a ratio of order
+**20**, not 10² — a materially different proposition.
+
+The last row is instructive: the regrouping is only an improvement while the
+shift is small, because the terms it leaves behind are `O(‖W‖²)` and eventually
+overtake the `O(‖W‖)` term it removed. That is exactly the right behaviour for
+this programme, whose whole strategy is to sit just above `Re_E` with a tiny
+shift and then continue upward in small steps. It also says the §3.8 and §3.9
+bounds should both be evaluated and the better one taken.
+
+**What still depends on the box.** `‖W'‖ = √(L_xL_z)‖g'‖_{L²(−1,1)}`, so the
+surviving first-order term still grows like `√(L_xL_z)`. The bound
+`‖ū'‖ ≤ ‖∇u‖/√(L_xL_z)` is saturated only by `xz`-uniform fields — pure mean
+streaks, for which `v = w = 0` and `Ė = −Re⁻¹D` is strongly negative. Treating
+the mean-streak component of `u` separately should therefore remove the box
+dependence entirely; that is the next estimate to sharpen.
+
+## 3.10 Honest accounting: what is proved, and what is not
 
 **Established here, rigorously:**
 
@@ -375,12 +464,11 @@ stand — or, better, first sharpen them (see §3.9) and lower the target.
 * `𝒬` has not been constructed. Producing a finite-rank `𝒬̂` with certified
   `ĉ₂` and `K̂` satisfying (3.18) is the next concrete task, and it is where the
   construction may still fail.
-* The constants in (3.17) come from Cauchy–Schwarz and Poincaré and are
-  certainly not sharp. In particular the term `2Ė⟨W,u⟩` is better handled by the
-  regrouping `2Ė(E + ⟨W,u⟩) = 2ĖΨ`, which keeps the sign information that
-  Cauchy–Schwarz throws away; the crude route makes `b₀` grow like `√(L_xL_z)`
-  and so makes (3.18) box-dependent, which the regrouped form need not be. This
-  should be redone before concluding that any particular target is out of reach.
+* The constants are still not sharp. §3.9 already removes the worst loss (a
+  factor 4.71), but the surviving first-order term keeps a `√(L_xL_z)` box
+  dependence that a separate treatment of the mean-streak component should
+  remove. Nothing here should be read as showing a particular target is out of
+  reach.
 * No interval-arithmetic / rational-reconstruction certification has been done.
   All numbers above are double-precision (plus one mpmath cross-check) and are
   *evidence*, not proof.
