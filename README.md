@@ -78,7 +78,8 @@ still-to-be-built quadratic form `Q` must achieve.
 quartic term share the factor `𝒟_W`, one has the exact identity
 `2Ė⟨W,u⟩ + Γ₄ = −2𝒟_W(E + ⟨W,u⟩) − 2⟨W,u⟩⟨W,F₂(u)⟩`, which turns the dominant
 `O(‖W‖)` cubic term into `O(‖W‖²)`. For the first target `Re = 20.7` the
-requirement on `Q` drops from `ĉ₂/K̂ ≳ 10²` to `ĉ₂/K̂ ≳ 20`.
+requirement on `Q` drops from `ĉ₂/K̂ ≳ 20` to `ĉ₂/K̂ ≳ 5`. The criterion is
+box-independent: both sides scale like `√(L_xL_z)`.
 
 ## What is *not* established
 

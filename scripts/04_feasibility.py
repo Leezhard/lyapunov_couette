@@ -62,8 +62,16 @@ def feasibility(re_target: float, safety: float, lx: float, lz: float,
              + 2.0 * c4 * W                            # second order
              + W * dg_inf / LAMBDA_1)                  # second order
 
-    # 4 c4 c2 - b^2 > 0 for some rho  <=>  4 c4 chat2 > 16 Bhat b0,  Bhat = 2Khat/lambda_1
-    req = lambda b0: (8.0 * b0 / (LAMBDA_1 * c4) if c4 > 0 else np.inf)
+    # Maximising F(rho) = 4 rho chat2 c4 - (b0 + rho Bhat)^2 over rho > 0 gives
+    #     F_max > 0  <=>  chat2 c4 > b0 Bhat,
+    # verified symbolically and numerically in tests/test_feasibility_algebra.py.
+    # Two admissible choices of the cubic bound on 2<Qu, F2(u)>:
+    #   (i)  <= (2 Khat / lambda_1)     ||u|| D,  Khat  = sup ||grad(Qtilde u)||_inf / ||u||
+    #   (ii) <= (2 Kphat / sqrt(lambda_1)) ||u|| D,  Kphat = sup ||Qtilde u||_inf / ||u||
+    # (ii) needs no derivative of Qtilde and is usually the better of the two.
+    req_grad = lambda b0: (2.0 * b0 / (LAMBDA_1 * c4) if c4 > 0 else np.inf)
+    req_sup = lambda b0: (2.0 * b0 / (np.sqrt(LAMBDA_1) * c4) if c4 > 0 else np.inf)
+    req = req_grad
 
     return {
         "Re_target": re_target, "safety": safety, "Lx": lx, "Lz": lz,
@@ -73,6 +81,7 @@ def feasibility(re_target: float, safety: float, lx: float, lz: float,
         "b0_cauchy_schwarz": b0_cs, "b0_regrouped": b0_rg,
         "required_c2_over_K_cs": req(b0_cs),
         "required_c2_over_K_regrouped": req(b0_rg),
+        "required_c2_over_Kprime_regrouped": req_sup(b0_rg),
     }
 
 

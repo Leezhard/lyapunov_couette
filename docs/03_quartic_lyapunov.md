@@ -360,12 +360,30 @@ b = 2( 1/Re_E + 1/Re ) ‖W‖ + ( ‖W''‖/Re + 2K ) / λ₁ .                
 ### The feasibility ratio
 
 `c₂` and `K` both scale linearly with the size of `𝒬̃`; writing `𝒬̃ = ρ𝒬̂` with
-`𝒬̂` normalised, `c₂ = ρĉ₂`, `K = ρK̂`, and `b = b₀ + ρB̂` with
-`B̂ = 2K̂/λ₁`. Maximising `4c₂c₄ − b²` over `ρ` gives a positive value **iff**
+`𝒬̂` normalised, `c₂ = ρĉ₂`, `K = ρK̂`, and `b = b₀ + ρB̂` with `B̂ = 2K̂/λ₁`.
+Maximising `F(ρ) = 4ρĉ₂c₄ − (b₀ + ρB̂)²` over `ρ > 0` gives
+`F_max = (4ĉ₂c₄/B̂)(ĉ₂c₄/B̂ − b₀)`, so a feasible `ρ` exists **iff**
 
 ```
-                 4 c₄ ĉ₂  >  16 B̂ b₀ ,    i.e.    ĉ₂ / K̂  >  8 b₀ / (λ₁ c₄).  (3.18ʹ)
+                 ĉ₂ c₄  >  b₀ B̂ ,     i.e.     ĉ₂ / K̂  >  2 b₀ / (λ₁ c₄).   (3.18ʹ)
 ```
+
+(This is verified symbolically and numerically in
+`tests/test_feasibility_algebra.py`. An earlier version of this section carried
+a spurious factor of 4 here, making every target four times harder than it is.)
+
+**A sharper choice of the cubic bound.** The estimate
+`|⟨𝒬̃u,(u·∇)u⟩| ≤ ‖∇(𝒬̃u)‖_∞ ‖u‖²` is not the only one available. Using instead
+`|⟨𝒬̃u,(u·∇)u⟩| ≤ ‖𝒬̃u‖_∞ ‖u‖ ‖∇u‖` gives
+
+```
+|2⟨𝒬u,F₂(u)⟩| ≤ (2K' / √λ₁) ‖u‖ D,        K' := sup ‖𝒬̃u‖_∞ / ‖u‖,
+```
+
+which needs no derivative of `𝒬̃` at all. Since `‖∇(𝒬̃u)‖_∞ ≳ 2‖𝒬̃u‖_∞` for
+modes at the critical wavenumber, while `√λ₁ = 1.571 < λ₁ = 2.467`, this is
+roughly a further 1.3× gain. Both bounds are reported by
+`scripts/04_feasibility.py`; the better one should be used.
 
 `scripts/04_feasibility.py` evaluates (3.18ʹ) over a sweep of targets and shift
 amplitudes, with the box `L_x = L_z = 2π/β_c`. Writing `‖g‖ = safety × (3.14)`:
@@ -454,16 +472,16 @@ At `Re = 20.7` the first-order `‖W‖`-coefficient of `b₀` drops from `0.495
 
 | `Re` | safety | required `ĉ₂/K̂`, §3.8 | required `ĉ₂/K̂`, §3.9 | gain |
 |---|---|---|---|---|
-| 20.70 | 1.5 | 212.9 | 46.3 | 4.60× |
-| 20.70 | 2.0 | 142.0 | 31.1 | 4.56× |
-| 20.70 | 4.0 | 94.6 | 21.4 | 4.42× |
-| 20.70 | 10.0 | 78.9 | **19.6** | 4.03× |
-| 21.00 | 2.0 | 140.3 | 38.4 | 3.66× |
-| 22.00 | 2.0 | 135.2 | 61.2 | 2.21× |
-| 22.00 | 10.0 | 75.1 | 110.7 | 0.68× |
+| 20.70 | 1.5 | 53.2 | 11.6 | 4.60× |
+| 20.70 | 2.0 | 35.5 | 7.8 | 4.56× |
+| 20.70 | 4.0 | 23.7 | 5.4 | 4.42× |
+| 20.70 | 10.0 | 19.7 | **4.9** | 4.03× |
+| 21.00 | 2.0 | 35.1 | 9.6 | 3.66× |
+| 22.00 | 2.0 | 33.8 | 15.3 | 2.21× |
+| 22.00 | 10.0 | 18.8 | 27.7 | 0.68× |
 
 So for the first target `Re = 20.7` the requirement on `𝒬` is a ratio of order
-**20**, not 10² — a materially different proposition.
+**5**, not 10² — a materially different proposition.
 
 The last row is instructive: the regrouping is only an improvement while the
 shift is small, because the terms it leaves behind are `O(‖W‖²)` and eventually
@@ -472,12 +490,16 @@ this programme, whose whole strategy is to sit just above `Re_E` with a tiny
 shift and then continue upward in small steps. It also says the §3.8 and §3.9
 bounds should both be evaluated and the better one taken.
 
-**What still depends on the box.** `‖W'‖ = √(L_xL_z)‖g'‖_{L²(−1,1)}`, so the
-surviving first-order term still grows like `√(L_xL_z)`. The bound
-`‖ū'‖ ≤ ‖∇u‖/√(L_xL_z)` is saturated only by `xz`-uniform fields — pure mean
-streaks, for which `v = w = 0` and `Ė = −Re⁻¹D` is strongly negative. Treating
-the mean-streak component of `u` separately should therefore remove the box
-dependence entirely; that is the next estimate to sharpen.
+**The box dependence cancels.** `‖W'‖ = √(L_xL_z)‖g'‖_{L²(−1,1)}`, so `b₀`, and
+with it the *required* ratio in (3.18ʹ), grows like `√(L_xL_z)`. But so does the
+*available* ratio: for `𝒬̃` built from modes normalised in `L²(Ω)`, `K̂` (a
+pointwise norm) scales like `1/√(L_xL_z)` while `ĉ₂` (a ratio of integrals) does
+not, so `ĉ₂/K̂ ∝ √(L_xL_z)` as well. **The feasibility criterion is therefore
+box-independent**, which is what one wants — a construction that only worked in
+small boxes would be of little interest. Sharpening the mean-streak estimate
+(`‖ū'‖ ≤ ‖∇u‖/√(L_xL_z)` is saturated only by `xz`-uniform fields, for which
+`v = w = 0` and `Ė = −Re⁻¹D` is strongly negative) would lower both sides
+further, but is not needed to make the criterion well-posed.
 
 ## 3.10 Honest accounting: what is proved, and what is not
 
@@ -505,9 +527,16 @@ dependence entirely; that is the next estimate to sharpen.
 * **No improved bound on `Re` is proved yet.** Everything above is the
   *framework* plus the quartic ingredient. Points 1–6 do not by themselves
   certify global stability at any `Re > Re_E`.
-* `𝒬` has not been constructed. Producing a finite-rank `𝒬̂` with certified
-  `ĉ₂` and `K̂` satisfying (3.18) is the next concrete task, and it is where the
-  construction may still fail.
+* **`𝒬` has not been constructed.** Producing a finite-rank `𝒬̂` with certified
+  `ĉ₂` and `K̂` satisfying (3.18ʹ) is the immediate next task, and it is where
+  the construction may still fail. Doing it needs the linearised Orr–Sommerfeld
+  /Squire operator, which is not implemented here. A crude scaling estimate for
+  a rank-two `𝒬̃` built from the critical mode suggests the achievable ratio is
+  of order unity against a requirement of order 5 — i.e. short, but by a factor
+  of a few rather than by orders of magnitude, and computed with bounds
+  (particularly the `L^∞` cubic estimate) that are the crudest in the chain.
+  That estimate is quoted only to indicate scale; it has not been computed
+  carefully and should not be relied on either way.
 * The constants are still not sharp. §3.9 already removes the worst loss (a
   factor 4.71), but the surviving first-order term keeps a `√(L_xL_z)` box
   dependence that a separate treatment of the mean-streak component should
