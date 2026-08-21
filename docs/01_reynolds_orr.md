@@ -53,6 +53,11 @@ Hence the **exact** identity
 dE/dt = − ∫ u v dV − Re⁻¹ ∫ |∇u|² dV.                                     (1.1)
 ```
 
+The manipulations above assume enough regularity to integrate by parts (strong
+solutions suffice) and that the perturbation pressure is single-valued and
+periodic, so that `∫ ∇p·u dV` really integrates to zero rather than picking up a
+mean pressure-gradient contribution.
+
 Two features of (1.1) drive everything that follows.
 
 1. **There is no cubic term.** The advective nonlinearity is invisible in the
@@ -78,10 +83,18 @@ From (1.1), `dE/dt < 0` for every non-zero admissible `u` if and only if
       Re_E   u    ∫ |∇u|² dV
 ```
 
-the maximum being over divergence-free fields vanishing on the walls. We carry
-a general real weight `Σ(y)` through the whole computation, because the quartic
-Lyapunov functional of §3 requires exactly the same eigenvalue problem with a
-*modified* `Σ`.
+the maximum being over `u ∈ H¹₀,σ`, i.e. divergence-free fields vanishing on the
+walls; it is attained, the production form being compact relative to the
+dissipation form by Rellich. We carry a general real weight `Σ(y)` through the
+whole computation, because the quartic Lyapunov functional of §3 requires
+exactly the same eigenvalue problem with a *modified* `Σ`.
+
+**Dependence on the box.** Strictly, `Re_E = Re_E(L_x, L_z)`: a finite periodic
+box admits only the discrete wavenumbers `α ∈ (2π/L_x)ℤ`, `β ∈ (2π/L_z)ℤ`, so
+its threshold is at least as large as the infimum over *all* real `(α, β)`. The
+number reported below is that infimum — the worst case over all box sizes, and
+the relevant value for boxes large enough to contain the critical wavelength.
+Any finite box does at least as well.
 
 Writing the production in terms of the rate-of-strain tensor
 `S^U_ij = ½(∂_j U_i + ∂_i U_j)` — for `U = (y,0,0)` the only nonzero entries are
@@ -208,8 +221,13 @@ unit-depth layer via `y = 2ηc − 1` sends `D_y = ½ D_η`, and (1.10) becomes
 Hence the textbook values `Ra_c = 1707.762`, `a_c = 3.117` predict
 
 ```
-Re_E = √(Ra_c)/2 ≈ 20.6625,        β_c = a_c/2 ≈ 1.5582.
+Re_E = √(Ra_c)/2 ≈ 20.6625,        β_c = a_c/2 ≈ 1.5585.
 ```
+
+(The rounded `a_c = 3.117` gives `β_c = 1.5585`; the sharper
+`a_c = 3.1163236` gives `β_c = 1.5581618`, which is the value computed in §1.7.
+`Ra_c` is far less sensitive than `a_c`, because `Ra(a)` is stationary at its
+minimum while `a_c` itself is not.)
 
 The critical mode is even in `y`, so setting `u = Σ_j A_j cosh(s_j y)` with
 `s_j² = β² + q_j` and `q_j³ = −R²β²` reduces (1.10) to a 3×3 boundary
