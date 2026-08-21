@@ -62,3 +62,25 @@ def test_shear_basis_vanishes_at_walls():
     assert np.max(np.abs(ends)) < 1e-12
     mid = sb.g(c, deriv=0, y=np.linspace(-1, 1, 101))
     assert np.max(np.abs(mid + mid[::-1])) < 1e-12       # odd
+
+
+def test_wall_layer_weight_is_mean_preserving_and_unbounded():
+    """Sec. 3.4: Re_E[Sigma] is unbounded above on the mean-preserving class."""
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
+    from importlib import import_module
+    mod = import_module("03_shear_shift")
+
+    prev = None
+    for delta, n_max, bmax in ((0.2, 90, 14.0), (0.1, 120, 28.0)):
+        s = mod.wall_layer_sigma(delta)
+        y = np.linspace(-1.0, 1.0, 20001)
+        assert abs(np.trapezoid(s(y), y) / 2.0 - 1.0) < 1e-6      # mean is 1
+        _, lam = ro.optimise_beta(0.0, n_max=n_max, sigma=s,
+                                  bracket=(0.5, 1.2 / delta, bmax))
+        re = 1.0 / lam
+        assert re > RE_E                       # far above the unshifted threshold
+        assert abs(re * delta - 29.07) < 0.05  # the 1/delta law, constant 29.0713
+        if prev is not None:
+            assert re > prev                   # monotone as delta shrinks
+        prev = re

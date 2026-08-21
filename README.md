@@ -55,10 +55,15 @@ Reynolds–Orr functional in which the base-flow strain `S^U` is replaced by
 `S^U − S^W`. Adding a linear term to a quartic functional is therefore precisely
 a *shift of the effective shear*.
 
-**4. Admissible shifts are mean-preserving.** For `W = (g(y),0,0)` the weight is
-`Σ = 1 − g'`, and controlling the viscous term without `H²` bounds forces
-`g(±1) = 0`, hence `∫g' dy = 0`. The shear can only be redistributed across the
-channel, never weakened on average.
+**4. Admissible shifts are mean-preserving — but that is not a limitation.**
+For `W = (g(y),0,0)` the weight is `Σ = 1 − g'`, and controlling the viscous term
+without `H²` bounds forces `g(±1) = 0` — equivalently `W ∈ D(A)`, the domain of
+the Stokes operator — hence `∫g' dy = 0`. Since `Σ = Ũ'` for the shifted profile
+`Ũ = y − g`, this says exactly that `Ũ` must still reach `±1` at the walls: the
+mean shear is pinned by no-slip, as for a background profile in the
+Doering–Constantin method. It constrains the *shape* of the shift, not the size
+of the gain: concentrating `Σ` in wall layers of thickness `δ` gives
+`Re_E[Σ_δ] ≃ 29.0713/δ → ∞`, verified numerically to six digits.
 
 **5. Redistribution alone is very effective, and the optimal shift is explicit.**
 With `Φ(y) = −Re[û conj(v̂)]` the Reynolds-stress density of the critical mode,

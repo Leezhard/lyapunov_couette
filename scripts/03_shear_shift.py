@@ -39,6 +39,24 @@ def sigma_from_samples(y, dg):
     return _s
 
 
+def wall_layer_sigma(delta: float, sharp: float = 6.0):
+    """Mean-preserving weight concentrated in wall layers of thickness ``delta``.
+
+    ``Sigma ~ 1/delta`` for ``|y| > 1 - delta`` and ~0 in the core, smoothed by a
+    tanh of width ``delta/sharp`` so that the Gauss-Legendre quadrature of the
+    solver converges, and renormalised so that the mean over [-1, 1] is exactly 1.
+    """
+    w = delta / sharp
+    yy = np.linspace(-1.0, 1.0, 40001)
+    prof = 0.5 * (1.0 + np.tanh((np.abs(yy) - (1.0 - delta)) / w))
+    mean = np.trapezoid(prof, yy) / 2.0
+
+    def _s(y):
+        y = np.asarray(y, dtype=float)
+        return 0.5 * (1.0 + np.tanh((np.abs(y) - (1.0 - delta)) / w)) / mean
+    return _s
+
+
 def check_alpha0_still_critical(sigfun, n_max=32):
     """Confirm the shifted problem is still critical at alpha = 0."""
     worst, wa, wb = np.inf, None, None
@@ -135,6 +153,29 @@ def main() -> None:
         lam1.append({"k": k, "lambda_min": float(ev[0])})
         print(f"     k = {k:6.3f}   min D/||u||^2 = {ev[0]:.8f}")
     out["stokes"] = {"lambda_1_infimum": np.pi ** 2 / 4, "by_wavenumber": lam1}
+
+    print()
+    print("=" * 74)
+    print("(e) Mean-preservation is not a limitation: Re_E[Sigma] is unbounded")
+    print("=" * 74)
+    print("\n  Weight concentrated in wall layers of thickness delta (mean still 1),")
+    print("  leaving the core shear-free.  Re_E[Sigma_delta] should grow like 1/delta.")
+    print(f"\n{'delta':>9} {'N':>5} {'beta_opt':>10} {'beta*delta':>11} "
+          f"{'Re_E[Sig]':>12} {'Re_E*delta':>11}")
+    wall = []
+    for delta, N, bmax in ((0.4, 70, 8.0), (0.3, 80, 10.0), (0.2, 90, 14.0),
+                           (0.15, 100, 20.0), (0.1, 120, 28.0),
+                           (0.07, 140, 40.0), (0.05, 170, 56.0)):
+        s = wall_layer_sigma(delta)
+        b, lam = ro.optimise_beta(0.0, n_max=N, sigma=s,
+                                  bracket=(0.5, 1.2 / delta, bmax))
+        wall.append({"delta": delta, "beta_opt": b, "Re_E": 1.0 / lam})
+        print(f"{delta:9.3f} {N:5d} {b:10.4f} {b * delta:11.4f} "
+              f"{1.0 / lam:12.4f} {delta / lam:11.4f}")
+    out["wall_layer"] = wall
+    print("\n  Re_E[Sigma_delta] -> 29.0713 / delta.  The mean of Sigma is pinned by")
+    print("  no-slip (the shifted profile Utilde = y - g must still reach +-1 at the")
+    print("  walls), but that pins the shape of the shift, not the size of the gain.")
 
     (RESULTS / "03_shear_shift.json").write_text(json.dumps(out, indent=2))
     print(f"\n  written: {RESULTS / '03_shear_shift.json'}")

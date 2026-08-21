@@ -151,17 +151,60 @@ Now examine the `W`-terms of `Γ₃`, using `⟨W, Pf⟩ = ⟨W, f⟩`:
   vanishes because `u = 0` on the walls; the first is `∮ g ∂_n u dS`, which
   involves the **wall shear stress** of the perturbation.
 
-Controlling `∮ g ∂_n u dS` would require `H²` control of `u`, which `dV/dt` does
-not supply. Demanding instead the clean estimate
-`|⟨W, Δu⟩| ≤ ‖g''‖ ‖u‖` therefore **forces**
+Explicitly, `⟨W, Δu⟩ = ∫ g''(y) u dV + L_xL_z[ g(1)ū'(1) − g(−1)ū'(−1) ]`, where
+`ū` is the `xz`-mean of the *streamwise* component. Controlling that boundary
+term would require `H²` control of `u` — a trace of `∇u` needs `H^{3/2+ε}` —
+which `dV/dt` does not supply. It survives a single integration by parts too, so
+the conclusion is robust across estimate choices. Demanding the clean estimate
+`|⟨W, Δu⟩| ≤ ‖g''‖ ‖u‖` therefore **forces the pair**
 
 ```
-g(±1) = 0     ⟹     ∫₋₁¹ g'(y) dy = g(1) − g(−1) = 0.                   (3.10)
+g(1) = g(−1) = 0     ⟹     ∫₋₁¹ g'(y) dy = g(1) − g(−1) = 0.            (3.10)
 ```
 
-> **The mean of `Σ` is pinned at 1.** The admissible shifts are exactly the
-> **mean-preserving redistributions** of the shear across the channel. One
-> cannot simply weaken the shear everywhere; one can only move it.
+Equivalently and more structurally: **`W` must lie in the domain of the Stokes
+operator**, `W ∈ D(A) ⊂ H¹₀`, which is what makes
+`⟨W, −PΔu⟩ = ⟨−PΔW, u⟩` legitimate. (Note `PW = W` needs only `∇·W = 0` and
+`W·n = 0`; it does *not* remove the boundary term.) Two caveats: the boundary
+term involves only the `(0,0)` Fourier mode of the streamwise velocity, so for
+perturbations with zero `xz`-mean streamwise velocity it vanishes for *any* `g`
+— the constraint is forced by the mean-flow-distortion part of the admissible
+class, using that `ū'(1)` and `ū'(−1)` are independently arbitrary (take
+`u = ((1−y²)(a+by), 0, 0)`). And a functional carrying genuine `H²` control
+(a `Q` whose dissipation contains `∫|Δu|²`, say) would admit `g(±1) ≠ 0`.
+
+> **The mean of `Σ` is pinned at 1.** Since `Σ = Ũ'` for the shifted profile
+> `Ũ(y) = y − g(y)`, the constraint `∫Σ dy = 2` says exactly that `Ũ` still
+> satisfies the *true* wall conditions `Ũ(±1) = ±1`: the mean shear must equal
+> the imposed wall velocity jump. The mean is pinned by no-slip; the `H²`
+> estimate merely re-derives it. This is structurally the same constraint that
+> a background profile must satisfy in the Doering–Constantin background-flow
+> method (a connection worth checking against that literature, which this
+> session could not).
+
+Note carefully that (3.10) pins the *pair* of endpoint values, not merely the
+integral. At the level of the *weight* the two descriptions agree — `Σ` is blind
+to an additive constant in `g`, and
+`{Σ = 1 − g' : g ∈ H², g(±1) = 0} = {Σ ∈ H¹ : ∫Σ dy = 2}` — but at the level of
+the *shift* the additive constant is pinned too, and it matters: `⟨W,u⟩`,
+`‖g‖`, and the positivity requirement `q₋ > ‖W‖²` all change under `g → g + c`.
+
+**Mean-preservation is not a limitation.** It restricts the *shape* of the shift,
+not the size of the gain: `Re_E[Σ]` is unbounded above on the mean-preserving
+class. Concentrating `Σ` in wall layers of thickness `δ` — where the no-slip
+condition suppresses the disturbance — and leaving the core shear-free gives, by
+direct computation with the solver of §1.5,
+
+| `δ` | 0.20 | 0.15 | 0.10 | 0.07 | 0.05 |
+|---|---|---|---|---|---|
+| `Re_E[Σ_δ]` | 145.30 | 193.81 | 290.71 | 415.30 | 581.43 |
+| `Re_E[Σ_δ]·δ` | 29.060 | 29.071 | 29.0713 | 29.0713 | 29.0713 |
+| `β_opt·δ` | 1.1418 | 1.1464 | 1.1466 | 1.1466 | 1.1466 |
+
+i.e. `Re_E[Σ_δ] ≃ 29.0713/δ → ∞`. The binding cost of a shift is therefore never
+its mean; it is the norms the shift forces into `Γ₃` and into the positivity of
+`V` — and along this wall-layer family `‖g''‖ ~ δ^{−3/2}` blows up, which is
+exactly why §3.5 optimises the shift against those norms instead.
 
 With (3.10) in force,
 
