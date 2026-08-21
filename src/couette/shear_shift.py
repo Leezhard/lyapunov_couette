@@ -60,18 +60,16 @@ def reynolds_stress_density(alpha: float, beta: float, n_max: int = 48,
     """
     sol = ro.solve_mode(alpha, beta, n_max=n_max, sigma=sigma)
     y = np.linspace(-1.0, 1.0, n_eval)
-    u, v, w = ro.mode_profiles(sol, y)
+    u, du, v, dv, _, _ = ro.mode_profiles_and_derivatives(sol, y)
 
-    # Normalise so that the dissipation integral equals 1.
-    du, dv, dw = (np.gradient(f, y, edge_order=2) for f in (u, v, w))
-    k2 = alpha ** 2 + beta ** 2
-    diss = np.trapezoid(np.abs(du) ** 2 + np.abs(dv) ** 2 + np.abs(dw) ** 2
-                        + k2 * (np.abs(u) ** 2 + np.abs(v) ** 2 + np.abs(w) ** 2), y)
-    scale = 1.0 / np.sqrt(diss)
-    u, v = u * scale, v * scale
+    # Normalise so that the dissipation integral equals 1.  Both the integral
+    # and the derivatives below are exact, so Phi'(+-1) = 0 holds to round-off
+    # -- which is what makes the shift automatically admissible (docs/03 Sec 3.5).
+    scale = 1.0 / np.sqrt(ro.dissipation(sol))
+    u, du, v, dv = u * scale, du * scale, v * scale, dv * scale
 
     phi = -np.real(u * np.conj(v))
-    dphi = np.gradient(phi, y, edge_order=2)
+    dphi = -np.real(du * np.conj(v) + u * np.conj(dv))
     return y, phi, dphi, sol
 
 

@@ -202,17 +202,46 @@ def mode_profiles(sol: ROSolution, y: np.ndarray, n_max: int | None = None):
     The returned complex profiles satisfy the divergence-free condition
     ``i alpha u + D v + i beta w = 0`` by construction.
     """
+    u, _, v, _, w, _ = mode_profiles_and_derivatives(sol, y, n_max=n_max)
+    return u, v, w
+
+
+def mode_profiles_and_derivatives(sol: ROSolution, y: np.ndarray,
+                                  n_max: int | None = None):
+    """``(u, Du, v, Dv, w, Dw)`` of a solved mode, all differentiated *exactly*.
+
+    Derivatives are taken in the Galerkin basis rather than by finite
+    differencing the sampled profiles, so the divergence identity and the
+    dissipation integral hold to round-off instead of to the accuracy of a
+    difference stencil.
+    """
     n_max = sol.n_max if n_max is None else n_max
     vb, eb, _, _ = make_bases(n_max, max_deriv=2)
     k2 = sol.alpha ** 2 + sol.beta ** 2
 
     v = vb.evaluate(sol.v_coeffs, y, deriv=0)
     dv = vb.evaluate(sol.v_coeffs, y, deriv=1)
+    d2v = vb.evaluate(sol.v_coeffs, y, deriv=2)
     eta = eb.evaluate(sol.eta_coeffs, y, deriv=0)
+    deta = eb.evaluate(sol.eta_coeffs, y, deriv=1)
 
     u = 1j / k2 * (sol.alpha * dv - sol.beta * eta)
     w = 1j / k2 * (sol.beta * dv + sol.alpha * eta)
-    return u, v, w
+    du = 1j / k2 * (sol.alpha * d2v - sol.beta * deta)
+    dw = 1j / k2 * (sol.beta * d2v + sol.alpha * deta)
+    return u, du, v, dv, w, dw
+
+
+def dissipation(sol: ROSolution) -> float:
+    """``int (|Du|^2 + k^2 |u|^2) dy`` of a solved mode, exactly.
+
+    Read straight off the Galerkin dissipation matrix, which *is* ``k^2`` times
+    this integral, so no quadrature of the sampled profiles is involved.
+    """
+    A, B, _, _ = build_matrices(sol.alpha, sol.beta, sol.n_max)
+    k2 = sol.alpha ** 2 + sol.beta ** 2
+    x = np.concatenate([sol.v_coeffs, sol.eta_coeffs])
+    return float(np.real(x.conj() @ B @ x)) / k2
 
 
 def normalise_mode(sol: ROSolution, y: np.ndarray):
