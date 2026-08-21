@@ -11,6 +11,7 @@ Convention throughout: channel `y ∈ [−1,1]` (half-gap `h = 1`), base flow
 
 | | |
 |---|---|
+| [`docs/00_prior_art.md`](docs/00_prior_art.md) | What is already known: the SOS / quartic-Lyapunov line (all 2-D), the generalised-energy line, and what remains open |
 | [`docs/01_reynolds_orr.md`](docs/01_reynolds_orr.md) | Full derivation of the Reynolds–Orr variational/eigenvalue problem, the `(v, η)` reduction, the Chebyshev–Galerkin discretisation, and the `α = 0` ↔ Rayleigh–Bénard equivalence |
 | [`docs/02_critical_mode.md`](docs/02_critical_mode.md) | Symmetries, the critical roll–streak mode, and a proof that the `α = 0` subspace is globally stable at **every** `Re` |
 | [`docs/03_quartic_lyapunov.md`](docs/03_quartic_lyapunov.md) | The minimal quartic functional `V = E² + 2E⟨W,u⟩ + Q`, the shear-shift theorem, and an exact, rigorously controllable form of `dV/dt` |
@@ -111,7 +112,12 @@ all of them). This is a failure of the present chain of inequalities, not a
 disproof of the ansatz — §3.10 identifies the three lossy steps, the crudest by
 far being the `L^∞` cubic estimate, which discards the requirement that the
 nonlinear term actually correlate with `𝒬̃u`. Nothing has been certified in
-interval arithmetic. Prior art (Kaiser–Tilgner–von Wahl; Mulone and co-workers;
-Fuentes–Goluskin–Chernyshenko) has **not** been checked — the literature search
-for this session did not complete — so no novelty is claimed. See §3.11 of
-`docs/03_quartic_lyapunov.md` for the full accounting.
+interval arithmetic.
+
+**Novelty is not claimed.** Quartic Lyapunov functionals built by polynomial
+optimisation are the established state of the art
+(Fuentes–Goluskin–Chernyshenko 2022; Iligaray–Aballay–Fuentes 2026;
+Darrow–Carlson–Goluskin 2026), and §2.3 is due to Kaiser–Tilgner–von Wahl. What
+*is* still open is the 3-D case: every result in that line is two-dimensional,
+and 3-D is named as future work. See [`docs/00_prior_art.md`](docs/00_prior_art.md)
+and §3.11 of `docs/03_quartic_lyapunov.md`.

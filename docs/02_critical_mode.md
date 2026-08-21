@@ -79,6 +79,12 @@ with `α ≲ 0.1` and `β ∈ (1.5, 1.62)` participate at all.
 
 ## 2.3 The decisive structural fact: the `α = 0` subspace is globally stable at **every** `Re`
 
+> **Attribution.** This result is **not new**: Kaiser, Tilgner & von Wahl (SIAM
+> J. Math. Anal.) proved that streamwise-independent perturbations of plane
+> Couette flow are `L²`-energy stable at any Reynolds number. The derivation
+> below was obtained independently here and is kept because it is what motivates
+> §3, but the credit is theirs. See `docs/00_prior_art.md`.
+
 The energy method fails first on a streamwise-independent disturbance. But
 streamwise-independent disturbances of plane Couette flow are unconditionally
 globally stable — for all `Re`, at all amplitudes. The proof is three lines.

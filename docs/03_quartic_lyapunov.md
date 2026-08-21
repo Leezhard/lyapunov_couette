@@ -692,10 +692,15 @@ The lossy steps, in the order they are worth attacking:
 * No interval-arithmetic / rational-reconstruction certification has been done.
   All numbers above are double-precision (plus one mpmath cross-check) and are
   *evidence*, not proof.
-* **Prior art has not been checked.** The literature searches for this session
-  did not complete. Before claiming novelty, the work of Kaiser–Tilgner–von Wahl
-  on generalised energy functionals for plane Couette, the Mulone–Rionero and
-  Falsaperla–Giacobbe–Mulone line on tilted perturbations, and
-  Fuentes–Goluskin–Chernyshenko on SOS-based global stability beyond the energy
-  limit must all be read. It is entirely possible that parts of §3.3–§3.5 are
-  known.
+* **Prior art: partly checked, see `docs/00_prior_art.md`.** The target is
+  genuinely open — no published result certifies global stability of *3-D* plane
+  Couette above `Re_E`, and the SOS line (Fuentes–Goluskin–Chernyshenko 2022;
+  Iligaray–Aballay–Fuentes 2026; Darrow–Carlson–Goluskin 2026) is entirely
+  two-dimensional, with 3-D named as future work. But the *method* is not new:
+  quartic Lyapunov functionals built by polynomial optimisation are the state of
+  the art, and a June 2026 paper already identifies "the simplest class" of them
+  for 2-D parallel shear flows as a three-parameter quartic family. **Whether the
+  shear-shift theorem of §3.3 is already known could not be determined** — arXiv
+  is blocked from this environment — so nothing in §3.3–§3.5 should be claimed as
+  new until those papers are read. Also: §2.3 is due to Kaiser–Tilgner–von Wahl,
+  not to this work.
