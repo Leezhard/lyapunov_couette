@@ -63,11 +63,18 @@ Two features of (1.1) drive everything that follows.
 1. **There is no cubic term.** The advective nonlinearity is invisible in the
    energy norm. Therefore `dE/dt` is *exactly homogeneous of degree 2* in `u`,
    and the set `{dE/dt > 0}` is a **cone**: if the energy method fails at some
-   `u`, it fails equally at `s u` for every amplitude `s > 0`. The failure of
-   the energy method at `Re_E` is a statement about *direction*, not about
-   *amplitude*. Any attempt to repair it by an amplitude-dependent argument is
-   therefore misdirected; what is needed is a functional that sees direction
-   differently from `E`.
+   `u`, it fails equally at `s u` for every amplitude `s > 0`. So the failure of
+   the *energy method* at `Re_E` is a statement about direction, not amplitude.
+
+   This must not be over-read as a statement about the *flow*. Writing
+   `u = a q` with `‖q‖ = 1`, energy neutrality `⟨q, F₂(q)⟩ = 0` makes the
+   amplitude equation `ȧ = a⟨q, F₁q⟩` cubic-free, but the direction equation
+   `q̇ = Π_{q⊥}[F₁q] + a Π_{q⊥}[F₂(q)]` carries an explicitly
+   amplitude-proportional term. The cone is **not flow-invariant**, and the
+   semiflow is not homogeneous: the nonlinearity does zero net work on `E` while
+   still steering the state into and out of the cone at a rate set by the
+   amplitude. That is precisely the opening a non-quadratic functional exploits
+   — the quartic `V` of §3 is amplitude-dependent by design (§3.1).
 2. **The pressure drops out.** This is special to the energy norm. Any other
    quadratic weighting of the components reintroduces pressure work (§3.2),
    and with it a genuinely cubic term.
@@ -141,16 +148,23 @@ variables: the wall-normal velocity `v̂` and the wall-normal vorticity
 
 A one-line computation confirms `iα û + D v̂ + iβ ŵ = 0` for *any* `(v̂, η̂)`, so
 the pair is unconstrained; the boundary conditions become `v̂ = D v̂ = 0` and
-`η̂ = 0` at `y = ±1`. In these variables
+`η̂ = 0` at `y = ±1`. In these variables, writing `𝒟[û] = Σ_i ∫ (|Dû_i|² + k²|û_i|²) dy` for the modal
+dissipation integral (so that the physical `∫|∇u|²dV` equals `(L_xL_z/2)𝒟[û]`,
+and likewise `−∫ Σ u v dV = (L_xL_z/2)·(−∫Σ Re[û conj(v̂)] dy)` — the same factor
+on both, so it cancels in the Rayleigh quotient):
 
 ```
-k² ∫ |∇u|² dy = ∫ ( |D²v̂|² + 2k²|Dv̂|² + k⁴|v̂|² + |Dη̂|² + k²|η̂|² ) dy    (1.7)
+k² 𝒟[û] = ∫ ( |D²v̂|² + 2k²|Dv̂|² + k⁴|v̂|² + |Dη̂|² + k²|η̂|² ) dy          (1.7)
 
 k² ( −∫ Σ Re[û conj(v̂)] dy ) = ∫ Σ Im[ (α D v̂ − β η̂) conj(v̂) ] dy       (1.8)
 ```
 
-Both sides carry the same factor `1/k²`, so the Rayleigh quotient of (1.5) is
-the ratio of the right-hand sides of (1.8) and (1.7). The mode `k = 0` need not
+Both (1.6)–(1.8) are **pointwise algebraic identities in `y`**, valid for
+arbitrary `(v̂, η̂)`: no integration by parts and no boundary condition is used in
+deriving them. (Boundary conditions enter elsewhere — in `⟨u,Δu⟩ = −∫|∇u|²`, and
+in the §1.6 collapse to `‖(D²−β²)v‖²`.) Both sides of (1.7)–(1.8) carry the same
+factor `1/k²`, so the Rayleigh quotient of (1.5) is the ratio of the right-hand
+sides of (1.8) and (1.7). The mode `k = 0` need not
 be considered: continuity plus `v̂(±1) = 0` forces `v̂ ≡ 0` there, hence zero
 production.
 
